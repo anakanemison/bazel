@@ -25,6 +25,8 @@ package command_server;
 option java_package = "com.google.devtools.build.lib.server";
 option java_outer_classname = "CommandProtos";
 
+import "src/main/protobuf/failure_details.proto";
+
 // Passed to CommandServer.run to initiate execution of a Bazel command.
 message RunRequest {
   // Request cookie from the output base of the server. This serves as a
@@ -114,6 +116,9 @@ message RunResponse {
   // A command to exec() after the command invocation finishes. Should only be
   // present if finished is set.
   ExecRequest exec_request = 8;
+
+  // Fine-grained failure details. Should only be present if finished is set.
+  failure_details.FailureDetail failure_detail = 9;
 }
 
 // Passed to CommandServer.cancel to initiate graceful cancellation of an
