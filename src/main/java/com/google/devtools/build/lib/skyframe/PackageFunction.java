@@ -53,6 +53,8 @@ import com.google.devtools.build.lib.packages.WorkspaceFileValue;
 import com.google.devtools.build.lib.profiler.Profiler;
 import com.google.devtools.build.lib.profiler.ProfilerTask;
 import com.google.devtools.build.lib.profiler.SilentCloseable;
+import com.google.devtools.build.lib.server.FailureDetails;
+import com.google.devtools.build.lib.server.FailureDetails.SomeCommonFailure;
 import com.google.devtools.build.lib.skyframe.GlobValue.InvalidGlobPatternException;
 import com.google.devtools.build.lib.skyframe.SkylarkImportLookupFunction.SkylarkImportFailedException;
 import com.google.devtools.build.lib.skyframe.SkylarkImportLookupValue.SkylarkImportLookupKey;
@@ -94,6 +96,12 @@ import javax.annotation.Nullable;
  */
 public class PackageFunction implements SkyFunction {
 
+  private static final int EXTENSION_EXIT_CODE = SomeCommonFailure.COMMON_UNSPECIFIED
+      .getValueDescriptor()
+      .getOptions()
+      .getExtension(FailureDetails.metadata)
+      .getExitCode();
+
   private final PackageFactory packageFactory;
   private final CachingPackageLocator packageLocator;
   private final Cache<PackageIdentifier, LoadedPackageCacheEntry> packageFunctionCache;
@@ -121,6 +129,8 @@ public class PackageFunction implements SkyFunction {
       @Nullable PackageProgressReceiver packageProgress,
       ActionOnIOExceptionReadingBuildFile actionOnIOExceptionReadingBuildFile,
       IncrementalityIntent incrementalityIntent) {
+    Preconditions.checkState(EXTENSION_EXIT_CODE == 37, "nope (PackageFunction)");
+
     this.skylarkImportLookupFunctionForInlining = skylarkImportLookupFunctionForInlining;
     // Can be null in tests.
     this.preludeLabel = packageFactory == null

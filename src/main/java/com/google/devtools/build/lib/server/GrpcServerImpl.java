@@ -36,6 +36,7 @@ import com.google.devtools.build.lib.server.CommandProtos.RunRequest;
 import com.google.devtools.build.lib.server.CommandProtos.RunResponse;
 import com.google.devtools.build.lib.server.CommandProtos.ServerInfo;
 import com.google.devtools.build.lib.server.CommandProtos.StartupOption;
+import com.google.devtools.build.lib.server.FailureDetails.SomeCommonFailure;
 import com.google.devtools.build.lib.util.ExitCode;
 import com.google.devtools.build.lib.util.Pair;
 import com.google.devtools.build.lib.util.io.OutErr;
@@ -98,6 +99,12 @@ import java.util.logging.Logger;
 public class GrpcServerImpl extends CommandServerGrpc.CommandServerImplBase implements RPCServer {
   private static final Logger logger = Logger.getLogger(GrpcServerImpl.class.getName());
   private final boolean shutdownOnLowSysMem;
+
+  private static final int EXTENSION_EXIT_CODE = SomeCommonFailure.COMMON_UNSPECIFIED
+      .getValueDescriptor()
+      .getOptions()
+      .getExtension(FailureDetails.metadata)
+      .getExitCode();
 
   /**
    * Factory class. Instantiated by reflection.
@@ -348,6 +355,7 @@ public class GrpcServerImpl extends CommandServerGrpc.CommandServerImplBase impl
       boolean shutdownOnLowSysMem,
       boolean doIdleServerTasks)
       throws IOException {
+    Preconditions.checkState(EXTENSION_EXIT_CODE == 37, "nope");
     Runtime.getRuntime().addShutdownHook(new Thread(() -> shutdownHook()));
 
     // server.pid was written in the C++ launcher after fork() but before exec() .
