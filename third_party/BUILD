@@ -15,6 +15,7 @@ filegroup(
         "//third_party/ijar:srcs",
         "//third_party/iossim:srcs",
         "//third_party/grpc:srcs",
+        "//third_party/grpc/bazel:srcs",
         "//third_party/jarjar:srcs",
         "//third_party/jaxb:srcs",
         "//third_party/java/android_databinding:srcs",
