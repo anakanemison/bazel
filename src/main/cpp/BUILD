@@ -135,6 +135,7 @@ cc_binary(
         "//src/main/cpp/util:logging",
         "//src/main/cpp/util:strings",
         "//src/main/protobuf:command_server_cc_proto",
+        "//src/main/protobuf:command_server_cc_grpc",
         "//third_party/ijar:zip",
     ],
 )
